@@ -45,8 +45,23 @@
         </div>
     </div>
     
+    <script>
+        // Проверка загрузки всех ресурсов
+        console.log('HTML загружен');
+        console.log('Canvas элемент:', document.getElementById('gameCanvas') ? 'найден' : 'не найден');
+        console.log('Контейнер игры:', document.getElementById('vk-app') ? 'найден' : 'не найден');
+    </script>
     <script src="vk.js"></script>
     <script src="game.js"></script>
+    <script>
+        // Финальная проверка после загрузки всех скриптов
+        window.addEventListener('load', function() {
+            console.log('Все ресурсы загружены');
+            console.log('Игра:', window.game ? 'инициализирована' : 'не инициализирована');
+            console.log('Canvas видим:', document.getElementById('gameCanvas') && 
+                document.getElementById('gameCanvas').offsetWidth > 0 ? 'да' : 'нет');
+        });
+    </script>
 </body>
 </html>
 

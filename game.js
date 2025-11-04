@@ -1,10 +1,20 @@
 // Игровая логика
 class Game {
     constructor() {
+        console.log('Создание экземпляра игры...');
         this.canvas = document.getElementById('gameCanvas');
+        if (!this.canvas) {
+            console.error('Canvas не найден!');
+            return;
+        }
         this.ctx = this.canvas.getContext('2d');
+        if (!this.ctx) {
+            console.error('Не удалось получить контекст canvas!');
+            return;
+        }
         this.canvas.width = 800;
         this.canvas.height = 600;
+        console.log('Canvas настроен:', this.canvas.width, 'x', this.canvas.height);
         
         this.player = {
             x: this.canvas.width / 2,
@@ -287,15 +297,22 @@ class Game {
 // Инициализация игры при загрузке страницы
 let game;
 
-// Инициализируем игру сразу, не дожидаясь VK API
-if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', () => {
+function initGame() {
+    console.log('Инициализация игры...');
+    try {
         game = new Game();
         window.game = game; // Делаем игру доступной глобально для VK API
-    });
+        console.log('Игра успешно инициализирована');
+    } catch (error) {
+        console.error('Ошибка инициализации игры:', error);
+    }
+}
+
+// Инициализируем игру сразу, не дожидаясь VK API
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initGame);
 } else {
     // DOM уже загружен
-    game = new Game();
-    window.game = game;
+    initGame();
 }
 
