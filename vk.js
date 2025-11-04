@@ -1,30 +1,48 @@
 // Интеграция с VK API
 let gameInitialized = false;
 
-// Инициализация VK API
-VK.init({
-    apiId: 54294322
-}, function() {
-    console.log('VK API инициализирован');
-    gameInitialized = true;
+// Функция инициализации VK API
+function initVK() {
+    // Проверяем, загружен ли VK API
+    if (typeof VK === 'undefined') {
+        // Если VK API еще не загружен, ждем немного и пробуем снова
+        setTimeout(initVK, 100);
+        return;
+    }
     
-    // Получение информации о пользователе
-    VK.api('users.get', {
-        fields: 'photo_100'
-    }, function(response) {
-        if (response && response[0]) {
-            console.log('Пользователь:', response[0].first_name, response[0].last_name);
-            // Можно добавить приветствие пользователя
-        }
+    // Инициализация VK API
+    VK.init({
+        apiId: 54294322
+    }, function() {
+        console.log('VK API инициализирован');
+        gameInitialized = true;
+        
+        // Получение информации о пользователе
+        VK.api('users.get', {
+            fields: 'photo_100'
+        }, function(response) {
+            if (response && response[0]) {
+                console.log('Пользователь:', response[0].first_name, response[0].last_name);
+                // Можно добавить приветствие пользователя
+            }
+        });
+        
+        // Загрузка рекорда пользователя из VK
+        loadUserScore();
+    }, function() {
+        console.log('Ошибка инициализации VK API');
+        // Игра будет работать и без VK API
+        gameInitialized = true;
     });
-    
-    // Загрузка рекорда пользователя из VK
-    loadUserScore();
-}, function() {
-    console.log('Ошибка инициализации VK API');
-    // Игра будет работать и без VK API
-    gameInitialized = true;
-});
+}
+
+// Запускаем инициализацию после загрузки DOM
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initVK);
+} else {
+    // DOM уже загружен
+    initVK();
+}
 
 // Загрузка рекорда пользователя
 function loadUserScore() {

@@ -286,8 +286,16 @@ class Game {
 
 // Инициализация игры при загрузке страницы
 let game;
-window.addEventListener('DOMContentLoaded', () => {
+
+// Инициализируем игру сразу, не дожидаясь VK API
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => {
+        game = new Game();
+        window.game = game; // Делаем игру доступной глобально для VK API
+    });
+} else {
+    // DOM уже загружен
     game = new Game();
-    window.game = game; // Делаем игру доступной глобально для VK API
-});
+    window.game = game;
+}
 
