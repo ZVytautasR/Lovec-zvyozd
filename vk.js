@@ -1,39 +1,66 @@
-// Интеграция с VK API
+// Интеграция с VK API через VK Bridge (для iframe)
 let gameInitialized = false;
+let vkBridge = null;
 
-// Функция инициализации VK API
+// Функция инициализации VK Bridge
 function initVK() {
-    // Проверяем, загружен ли VK API
-    if (typeof VK === 'undefined') {
-        // Если VK API еще не загружен, ждем немного и пробуем снова
-        setTimeout(initVK, 100);
-        return;
+    // Проверяем различные способы доступа к VK Bridge
+    // ВКонтакте может предоставить его через разные способы
+    if (typeof window.vkBridge !== 'undefined') {
+        vkBridge = window.vkBridge;
+    } else if (typeof window.VK !== 'undefined' && window.VK.Bridge) {
+        vkBridge = window.VK.Bridge;
+    } else if (typeof vkBridge !== 'undefined') {
+        // Используем глобальный vkBridge если доступен
+        vkBridge = window.vkBridge;
+    } else {
+        // Если VK Bridge еще не загружен, ждем немного и пробуем снова (максимум 10 раз)
+        if (initVK.attempts === undefined) initVK.attempts = 0;
+        if (initVK.attempts < 10) {
+            initVK.attempts++;
+            setTimeout(initVK, 200);
+            return;
+        }
+        vkBridge = null;
     }
     
-    // Инициализация VK API
-    VK.init({
-        apiId: 54294322
-    }, function() {
-        console.log('VK API инициализирован');
+    if (vkBridge) {
+        console.log('VK Bridge найден');
         gameInitialized = true;
         
-        // Получение информации о пользователе
-        VK.api('users.get', {
-            fields: 'photo_100'
-        }, function(response) {
-            if (response && response[0]) {
-                console.log('Пользователь:', response[0].first_name, response[0].last_name);
-                // Можно добавить приветствие пользователя
-            }
-        });
-        
-        // Загрузка рекорда пользователя из VK
-        loadUserScore();
-    }, function() {
-        console.log('Ошибка инициализации VK API');
-        // Игра будет работать и без VK API
+        try {
+            // Инициализация VK Bridge
+            vkBridge.send('VKWebAppInit', {})
+                .then(() => {
+                    console.log('VK Web App инициализирован');
+                    
+                    // Получение информации о пользователе
+                    vkBridge.send('VKWebAppGetUserInfo', {})
+                        .then(data => {
+                            if (data && data.first_name) {
+                                console.log('Пользователь:', data.first_name, data.last_name);
+                            }
+                        })
+                        .catch(error => {
+                            console.log('Ошибка получения данных пользователя:', error);
+                        });
+                    
+                    // Загрузка рекорда пользователя из VK
+                    loadUserScore();
+                })
+                .catch(error => {
+                    console.log('Ошибка инициализации VK Web App:', error);
+                    gameInitialized = true;
+                });
+        } catch (error) {
+            console.log('Ошибка при работе с VK Bridge:', error);
+            gameInitialized = true;
+        }
+    } else {
+        // Если VK Bridge недоступен (не в iframe ВКонтакте), игра всё равно работает
+        console.log('VK Bridge недоступен, игра работает в автономном режиме');
         gameInitialized = true;
-    });
+    }
 }
 
 // Запускаем инициализацию после загрузки DOM
@@ -47,10 +74,13 @@ if (document.readyState === 'loading') {
 // Загрузка рекорда пользователя
 function loadUserScore() {
     // Используем VK Storage API для сохранения рекордов
-    if (window.VK && VK.callMethod) {
-        VK.callMethod('getStorageValues', ['highScore'], function(data) {
-            if (data && data.highScore) {
-                const vkHighScore = parseInt(data.highScore);
+    if (vkBridge) {
+        vkBridge.send('VKWebAppStorageGet', {
+            keys: ['highScore']
+        })
+        .then(data => {
+            if (data && data.keys && data.keys[0] && data.keys[0].value) {
+                const vkHighScore = parseInt(data.keys[0].value);
                 const localHighScore = parseInt(localStorage.getItem('highScore') || '0');
                 
                 // Используем максимальный рекорд
@@ -62,17 +92,25 @@ function loadUserScore() {
                     }
                 }
             }
+        })
+        .catch(error => {
+            console.log('Ошибка загрузки рекорда:', error);
         });
     }
 }
 
 // Сохранение рекорда в VK
 function saveScoreToVK(score) {
-    if (window.VK && VK.callMethod) {
-        VK.callMethod('setStorageValues', {
-            highScore: score.toString()
-        }, function() {
+    if (vkBridge) {
+        vkBridge.send('VKWebAppStorageSet', {
+            key: 'highScore',
+            value: score.toString()
+        })
+        .then(data => {
             console.log('Рекорд сохранён в VK');
+        })
+        .catch(error => {
+            console.log('Ошибка сохранения рекорда:', error);
         });
     }
 }
