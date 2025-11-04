@@ -58,8 +58,42 @@
         window.addEventListener('load', function() {
             console.log('Все ресурсы загружены');
             console.log('Игра:', window.game ? 'инициализирована' : 'не инициализирована');
-            console.log('Canvas видим:', document.getElementById('gameCanvas') && 
-                document.getElementById('gameCanvas').offsetWidth > 0 ? 'да' : 'нет');
+            
+            const canvas = document.getElementById('gameCanvas');
+            const app = document.getElementById('vk-app');
+            const container = document.querySelector('.game-container');
+            
+            if (canvas) {
+                const canvasStyle = window.getComputedStyle(canvas);
+                console.log('Canvas видим:', canvas.offsetWidth > 0 ? 'да' : 'нет');
+                console.log('Canvas размеры:', canvas.offsetWidth, 'x', canvas.offsetHeight);
+                console.log('Canvas display:', canvasStyle.display);
+                console.log('Canvas visibility:', canvasStyle.visibility);
+                console.log('Canvas opacity:', canvasStyle.opacity);
+                console.log('Canvas position:', canvasStyle.position);
+                console.log('Canvas z-index:', canvasStyle.zIndex);
+            }
+            
+            if (app) {
+                const appStyle = window.getComputedStyle(app);
+                console.log('vk-app размеры:', app.offsetWidth, 'x', app.offsetHeight);
+                console.log('vk-app display:', appStyle.display);
+            }
+            
+            if (container) {
+                const containerStyle = window.getComputedStyle(container);
+                console.log('game-container размеры:', container.offsetWidth, 'x', container.offsetHeight);
+                console.log('game-container display:', containerStyle.display);
+            }
+            
+            // Принудительно показываем всё
+            if (app) {
+                app.style.display = 'block';
+                app.style.visibility = 'visible';
+                app.style.opacity = '1';
+                app.style.position = 'relative';
+                app.style.zIndex = '999999';
+            }
         });
     </script>
 </body>

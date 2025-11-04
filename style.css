@@ -7,15 +7,17 @@
 html, body {
     width: 100% !important;
     height: 100% !important;
-    overflow: hidden !important;
+    overflow: auto !important;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif !important;
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
     min-height: 100vh !important;
     display: flex !important;
     justify-content: center !important;
-    align-items: center !important;
+    align-items: flex-start !important;
     color: #fff !important;
     position: relative !important;
+    margin: 0 !important;
+    padding: 0 !important;
 }
 
 #vk-app {
