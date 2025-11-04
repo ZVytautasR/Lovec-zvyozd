@@ -113,13 +113,34 @@
                 canvas.style.maxWidth = '100%';
             }
             
-            // Принудительно перерисовываем canvas
+            // Принудительно перерисовываем canvas несколько раз
             if (window.game && window.game.draw) {
                 setTimeout(() => {
                     window.game.draw();
-                    console.log('Canvas принудительно перерисован');
+                    console.log('Canvas принудительно перерисован (1)');
                 }, 100);
+                
+                setTimeout(() => {
+                    window.game.draw();
+                    console.log('Canvas принудительно перерисован (2)');
+                }, 500);
+                
+                setTimeout(() => {
+                    window.game.draw();
+                    console.log('Canvas принудительно перерисован (3)');
+                }, 1000);
             }
+            
+            // Проверяем, что canvas действительно виден в DOM
+            setTimeout(() => {
+                const canvasRect = canvas.getBoundingClientRect();
+                console.log('Canvas getBoundingClientRect:', canvasRect);
+                console.log('Canvas в видимой области viewport:', 
+                    canvasRect.top >= 0 && 
+                    canvasRect.left >= 0 && 
+                    canvasRect.bottom <= window.innerHeight && 
+                    canvasRect.right <= window.innerWidth ? 'да' : 'нет');
+            }, 1500);
         });
     </script>
 </body>

@@ -203,43 +203,47 @@ class Game {
             return;
         }
         
-        // Очистка canvas
-        this.ctx.fillStyle = '#1a1a2e';
-        this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
-        
-        // Рисование игрока
-        this.ctx.fillStyle = this.player.color;
-        this.ctx.fillRect(this.player.x, this.player.y, this.player.width, this.player.height);
-        
-        // Рисование звёзд
-        this.stars.forEach(star => {
-            this.ctx.fillStyle = star.color;
-            this.ctx.beginPath();
-            this.drawStar(this.ctx, star.x + star.width / 2, star.y + star.height / 2, 5, 15, 7);
-            this.ctx.fill();
-        });
-        
-        // Рисование бомб
-        this.bombs.forEach(bomb => {
-            this.ctx.fillStyle = bomb.color;
-            this.ctx.beginPath();
-            this.ctx.arc(bomb.x + bomb.width / 2, bomb.y + bomb.height / 2, bomb.width / 2, 0, Math.PI * 2);
-            this.ctx.fill();
-            // Взрывающийся эффект
-            this.ctx.fillStyle = '#FF8888';
-            this.ctx.beginPath();
-            this.ctx.arc(bomb.x + bomb.width / 2, bomb.y + bomb.height / 2, bomb.width / 3, 0, Math.PI * 2);
-            this.ctx.fill();
-        });
-        
-        // Отображение паузы
-        if (this.gamePaused) {
-            this.ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
+        try {
+            // Очистка canvas
+            this.ctx.fillStyle = '#1a1a2e';
             this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
-            this.ctx.fillStyle = '#FFFFFF';
-            this.ctx.font = '48px Arial';
-            this.ctx.textAlign = 'center';
-            this.ctx.fillText('ПАУЗА', this.canvas.width / 2, this.canvas.height / 2);
+            
+            // Рисование игрока
+            this.ctx.fillStyle = this.player.color;
+            this.ctx.fillRect(this.player.x, this.player.y, this.player.width, this.player.height);
+            
+            // Рисование звёзд
+            this.stars.forEach(star => {
+                this.ctx.fillStyle = star.color;
+                this.ctx.beginPath();
+                this.drawStar(this.ctx, star.x + star.width / 2, star.y + star.height / 2, 5, 15, 7);
+                this.ctx.fill();
+            });
+            
+            // Рисование бомб
+            this.bombs.forEach(bomb => {
+                this.ctx.fillStyle = bomb.color;
+                this.ctx.beginPath();
+                this.ctx.arc(bomb.x + bomb.width / 2, bomb.y + bomb.height / 2, bomb.width / 2, 0, Math.PI * 2);
+                this.ctx.fill();
+                // Взрывающийся эффект
+                this.ctx.fillStyle = '#FF8888';
+                this.ctx.beginPath();
+                this.ctx.arc(bomb.x + bomb.width / 2, bomb.y + bomb.height / 2, bomb.width / 3, 0, Math.PI * 2);
+                this.ctx.fill();
+            });
+            
+            // Отображение паузы
+            if (this.gamePaused) {
+                this.ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
+                this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+                this.ctx.fillStyle = '#FFFFFF';
+                this.ctx.font = '48px Arial';
+                this.ctx.textAlign = 'center';
+                this.ctx.fillText('ПАУЗА', this.canvas.width / 2, this.canvas.height / 2);
+            }
+        } catch (error) {
+            console.error('Ошибка при рисовании canvas:', error);
         }
     }
     
