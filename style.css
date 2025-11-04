@@ -23,8 +23,8 @@ html, body {
 #vk-app {
     width: 100% !important;
     max-width: 900px !important;
-    padding: 20px !important;
-    margin: 0 auto !important;
+    padding: 10px !important;
+    margin: 0 !important;
     display: block !important;
     visibility: visible !important;
     opacity: 1 !important;

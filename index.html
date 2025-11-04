@@ -96,7 +96,8 @@
                 app.style.position = 'static';
                 app.style.zIndex = '999999';
                 app.style.width = '100%';
-                app.style.margin = '0 auto';
+                app.style.margin = '0';
+                app.style.padding = '10px';
                 app.style.top = '0';
                 app.style.left = '0';
             }
@@ -105,9 +106,21 @@
             document.body.style.position = 'static';
             document.body.style.top = '0';
             document.body.style.left = '0';
+            document.body.style.margin = '0';
+            document.body.style.padding = '0';
             document.documentElement.style.position = 'static';
             document.documentElement.style.top = '0';
             document.documentElement.style.left = '0';
+            document.documentElement.style.margin = '0';
+            document.documentElement.style.padding = '0';
+            
+            // Прокручиваем к началу сразу
+            window.scrollTo(0, 0);
+            setTimeout(() => {
+                window.scrollTo(0, 0);
+                document.body.scrollTop = 0;
+                document.documentElement.scrollTop = 0;
+            }, 100);
             
             if (container) {
                 container.style.display = 'block';
@@ -172,9 +185,21 @@
                                      canvasRect.right > 0;
                     console.log('Canvas в видимой области viewport:', isVisible ? 'ДА' : 'НЕТ');
                     
-                    if (!isVisible) {
-                        console.warn('⚠️ Canvas НЕ в видимой области! Прокручиваем к нему...');
-                        canvas.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    if (!isVisible || canvasRect.top > 50) {
+                        console.warn('⚠️ Canvas НЕ в видимой области или смещен! Прокручиваем к нему...');
+                        // Прокручиваем к началу страницы
+                        window.scrollTo(0, 0);
+                        document.body.scrollTop = 0;
+                        document.documentElement.scrollTop = 0;
+                        
+                        // Если canvas всё ещё смещен, прокручиваем к нему
+                        setTimeout(() => {
+                            const newRect = canvas.getBoundingClientRect();
+                            if (newRect.top > 50) {
+                                canvas.scrollIntoView({ behavior: 'instant', block: 'start' });
+                                console.log('Прокрутили к canvas, новая позиция top:', newRect.top);
+                            }
+                        }, 200);
                     }
                     
                     // Проверяем, что canvas действительно рисует
