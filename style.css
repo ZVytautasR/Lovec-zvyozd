@@ -1,32 +1,46 @@
 * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
+    margin: 0 !important;
+    padding: 0 !important;
+    box-sizing: border-box !important;
 }
 
-body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    min-height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    color: #fff;
+html, body {
+    width: 100% !important;
+    height: 100% !important;
+    overflow: hidden !important;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif !important;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+    min-height: 100vh !important;
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    color: #fff !important;
+    position: relative !important;
 }
 
 #vk-app {
-    width: 100%;
-    max-width: 900px;
-    padding: 20px;
+    width: 100% !important;
+    max-width: 900px !important;
+    padding: 20px !important;
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    position: relative !important;
+    z-index: 9999 !important;
 }
 
 .game-container {
-    background: rgba(255, 255, 255, 0.1);
-    backdrop-filter: blur(10px);
-    border-radius: 20px;
-    padding: 30px;
-    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
-    border: 1px solid rgba(255, 255, 255, 0.18);
+    background: rgba(255, 255, 255, 0.1) !important;
+    backdrop-filter: blur(10px) !important;
+    border-radius: 20px !important;
+    padding: 30px !important;
+    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37) !important;
+    border: 1px solid rgba(255, 255, 255, 0.18) !important;
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    position: relative !important;
+    z-index: 10000 !important;
 }
 
 .game-header {
@@ -80,12 +94,16 @@ body {
 }
 
 #gameCanvas {
-    border-radius: 10px;
-    background: #1a1a2e;
-    display: block;
-    max-width: 100%;
-    height: auto;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+    border-radius: 10px !important;
+    background: #1a1a2e !important;
+    display: block !important;
+    max-width: 100% !important;
+    height: auto !important;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3) !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    position: relative !important;
+    z-index: 10001 !important;
 }
 
 .game-controls {
