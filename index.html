@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Игра ВКонтакте</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://vk.com/js/api/openapi.js?169" type="text/javascript"></script>
+</head>
+<body>
+    <div id="vk-app">
+        <div class="game-container">
+            <div class="game-header">
+                <h1>🎮 Ловец Звёзд</h1>
+                <div class="stats">
+                    <div class="stat-item">
+                        <span class="stat-label">Очки:</span>
+                        <span id="score">0</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">Рекорд:</span>
+                        <span id="high-score">0</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">Жизни:</span>
+                        <span id="lives">3</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div id="game-screen" class="game-screen">
+                <canvas id="gameCanvas"></canvas>
+            </div>
+            
+            <div class="game-controls">
+                <button id="startBtn" class="btn btn-primary">Начать игру</button>
+                <button id="pauseBtn" class="btn btn-secondary" disabled>Пауза</button>
+            </div>
+            
+            <div id="game-over" class="game-over hidden">
+                <h2>Игра окончена!</h2>
+                <p>Ваш результат: <span id="final-score">0</span></p>
+                <button id="restartBtn" class="btn btn-primary">Играть снова</button>
+            </div>
+        </div>
+    </div>
+    
+    <script src="vk.js"></script>
+    <script src="game.js"></script>
+</body>
+</html>
+
