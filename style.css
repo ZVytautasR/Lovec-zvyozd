@@ -84,13 +84,16 @@ html, body {
 }
 
 .game-screen {
-    background: rgba(0, 0, 0, 0.3);
-    border-radius: 15px;
-    padding: 10px;
-    margin-bottom: 20px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    background: rgba(0, 0, 0, 0.3) !important;
+    border-radius: 15px !important;
+    padding: 10px !important;
+    margin-bottom: 20px !important;
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    position: relative !important;
 }
 
 #gameCanvas {

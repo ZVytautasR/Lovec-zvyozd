@@ -38,6 +38,8 @@ class Game {
         this.bombInterval = 3000;
         
         this.init();
+        // Рисуем начальный кадр сразу
+        this.draw();
     }
     
     init() {
@@ -45,6 +47,11 @@ class Game {
         this.setupEventListeners();
         this.canvas.addEventListener('mousemove', (e) => this.handleMouseMove(e));
         this.canvas.addEventListener('touchmove', (e) => this.handleTouchMove(e));
+        
+        // Проверка видимости canvas
+        console.log('Canvas размеры:', this.canvas.width, 'x', this.canvas.height);
+        console.log('Canvas offset:', this.canvas.offsetWidth, 'x', this.canvas.offsetHeight);
+        console.log('Canvas style:', window.getComputedStyle(this.canvas).display);
     }
     
     setupEventListeners() {
@@ -190,6 +197,12 @@ class Game {
     }
     
     draw() {
+        // Проверка, что canvas и контекст доступны
+        if (!this.canvas || !this.ctx) {
+            console.error('Canvas или контекст недоступны для рисования');
+            return;
+        }
+        
         // Очистка canvas
         this.ctx.fillStyle = '#1a1a2e';
         this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
