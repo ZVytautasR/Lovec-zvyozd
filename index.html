@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <title>Игра ВКонтакте</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style.css?v=2">
 </head>
 <body>
     <div id="vk-app">
@@ -51,8 +51,8 @@
         console.log('Canvas элемент:', document.getElementById('gameCanvas') ? 'найден' : 'не найден');
         console.log('Контейнер игры:', document.getElementById('vk-app') ? 'найден' : 'не найден');
     </script>
-    <script src="vk.js"></script>
-    <script src="game.js"></script>
+    <script src="vk.js?v=2"></script>
+    <script src="game.js?v=2"></script>
     <script>
         // Финальная проверка после загрузки всех скриптов
         window.addEventListener('load', function() {
@@ -93,6 +93,32 @@
                 app.style.opacity = '1';
                 app.style.position = 'relative';
                 app.style.zIndex = '999999';
+                app.style.width = '100%';
+                app.style.minHeight = '100vh';
+            }
+            
+            if (container) {
+                container.style.display = 'block';
+                container.style.visibility = 'visible';
+                container.style.opacity = '1';
+                container.style.position = 'relative';
+            }
+            
+            if (canvas) {
+                canvas.style.display = 'block';
+                canvas.style.visibility = 'visible';
+                canvas.style.opacity = '1';
+                canvas.style.width = '800px';
+                canvas.style.height = '600px';
+                canvas.style.maxWidth = '100%';
+            }
+            
+            // Принудительно перерисовываем canvas
+            if (window.game && window.game.draw) {
+                setTimeout(() => {
+                    window.game.draw();
+                    console.log('Canvas принудительно перерисован');
+                }, 100);
             }
         });
     </script>
