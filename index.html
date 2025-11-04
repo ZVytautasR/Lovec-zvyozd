@@ -28,8 +28,10 @@
                 </div>
             </div>
             
-            <div id="game-screen" class="game-screen" style="display: flex !important; visibility: visible !important; opacity: 1 !important;">
-                <canvas id="gameCanvas" style="display: block !important; visibility: visible !important; opacity: 1 !important;"></canvas>
+            <div id="game-screen" class="game-screen" style="display: flex !important; visibility: visible !important; opacity: 1 !important; position: relative !important; z-index: 99999 !important;">
+                <canvas id="gameCanvas" style="display: block !important; visibility: visible !important; opacity: 1 !important; position: relative !important; z-index: 99999 !important; background: #1a1a2e !important;"></canvas>
+                <!-- Визуальный индикатор для отладки -->
+                <div id="debug-indicator" style="position: absolute; top: 10px; left: 10px; background: red; color: white; padding: 10px; z-index: 100000; font-size: 20px; display: block !important;">ИГРА ЗАГРУЖЕНА</div>
             </div>
             
             <div class="game-controls">
@@ -133,13 +135,45 @@
             
             // Проверяем, что canvas действительно виден в DOM
             setTimeout(() => {
-                const canvasRect = canvas.getBoundingClientRect();
-                console.log('Canvas getBoundingClientRect:', canvasRect);
-                console.log('Canvas в видимой области viewport:', 
-                    canvasRect.top >= 0 && 
-                    canvasRect.left >= 0 && 
-                    canvasRect.bottom <= window.innerHeight && 
-                    canvasRect.right <= window.innerWidth ? 'да' : 'нет');
+                if (canvas) {
+                    const canvasRect = canvas.getBoundingClientRect();
+                    console.log('=== ПРОВЕРКА ВИДИМОСТИ CANVAS ===');
+                    console.log('Canvas getBoundingClientRect:', JSON.stringify({
+                        top: canvasRect.top,
+                        left: canvasRect.left,
+                        bottom: canvasRect.bottom,
+                        right: canvasRect.right,
+                        width: canvasRect.width,
+                        height: canvasRect.height
+                    }));
+                    console.log('Window inner размеры:', window.innerWidth, 'x', window.innerHeight);
+                    console.log('Canvas в видимой области viewport:', 
+                        canvasRect.top >= 0 && 
+                        canvasRect.left >= 0 && 
+                        canvasRect.bottom <= window.innerHeight && 
+                        canvasRect.right <= window.innerWidth ? 'ДА' : 'НЕТ');
+                    
+                    // Проверяем, что canvas действительно рисует
+                    if (window.game && window.game.ctx) {
+                        try {
+                            const imageData = window.game.ctx.getImageData(0, 0, 1, 1);
+                            console.log('Canvas рисует - цвет первого пикселя:', imageData.data[0], imageData.data[1], imageData.data[2]);
+                        } catch (e) {
+                            console.error('Не удалось получить данные canvas:', e);
+                        }
+                    }
+                }
+                
+                // Проверяем, виден ли индикатор
+                const indicator = document.getElementById('debug-indicator');
+                if (indicator) {
+                    const indicatorRect = indicator.getBoundingClientRect();
+                    console.log('Индикатор видим:', indicatorRect.width > 0 && indicatorRect.height > 0 ? 'ДА' : 'НЕТ');
+                    console.log('Индикатор позиция:', JSON.stringify({
+                        top: indicatorRect.top,
+                        left: indicatorRect.left
+                    }));
+                }
             }, 1500);
         });
     </script>
