@@ -88,16 +88,26 @@
                 console.log('game-container display:', containerStyle.display);
             }
             
-            // Принудительно показываем всё
+            // Принудительно показываем всё и позиционируем в начале страницы
             if (app) {
                 app.style.display = 'block';
                 app.style.visibility = 'visible';
                 app.style.opacity = '1';
-                app.style.position = 'relative';
+                app.style.position = 'static';
                 app.style.zIndex = '999999';
                 app.style.width = '100%';
-                app.style.minHeight = '100vh';
+                app.style.margin = '0 auto';
+                app.style.top = '0';
+                app.style.left = '0';
             }
+            
+            // Убеждаемся, что body и html в начале
+            document.body.style.position = 'static';
+            document.body.style.top = '0';
+            document.body.style.left = '0';
+            document.documentElement.style.position = 'static';
+            document.documentElement.style.top = '0';
+            document.documentElement.style.left = '0';
             
             if (container) {
                 container.style.display = 'block';
@@ -136,22 +146,36 @@
             // Проверяем, что canvas действительно виден в DOM
             setTimeout(() => {
                 if (canvas) {
+                    // Прокручиваем к началу страницы
+                    window.scrollTo(0, 0);
+                    document.body.scrollTop = 0;
+                    document.documentElement.scrollTop = 0;
+                    
                     const canvasRect = canvas.getBoundingClientRect();
                     console.log('=== ПРОВЕРКА ВИДИМОСТИ CANVAS ===');
-                    console.log('Canvas getBoundingClientRect:', JSON.stringify({
-                        top: canvasRect.top,
-                        left: canvasRect.left,
-                        bottom: canvasRect.bottom,
-                        right: canvasRect.right,
-                        width: canvasRect.width,
-                        height: canvasRect.height
-                    }));
                     console.log('Window inner размеры:', window.innerWidth, 'x', window.innerHeight);
-                    console.log('Canvas в видимой области viewport:', 
-                        canvasRect.top >= 0 && 
-                        canvasRect.left >= 0 && 
-                        canvasRect.bottom <= window.innerHeight && 
-                        canvasRect.right <= window.innerWidth ? 'ДА' : 'НЕТ');
+                    console.log('Window scrollY:', window.scrollY);
+                    console.log('Document body scrollTop:', document.body.scrollTop);
+                    console.log('Canvas getBoundingClientRect:', JSON.stringify({
+                        top: Math.round(canvasRect.top),
+                        left: Math.round(canvasRect.left),
+                        bottom: Math.round(canvasRect.bottom),
+                        right: Math.round(canvasRect.right),
+                        width: Math.round(canvasRect.width),
+                        height: Math.round(canvasRect.height)
+                    }));
+                    
+                    // Более мягкая проверка видимости
+                    const isVisible = canvasRect.top < window.innerHeight && 
+                                     canvasRect.bottom > 0 && 
+                                     canvasRect.left < window.innerWidth && 
+                                     canvasRect.right > 0;
+                    console.log('Canvas в видимой области viewport:', isVisible ? 'ДА' : 'НЕТ');
+                    
+                    if (!isVisible) {
+                        console.warn('⚠️ Canvas НЕ в видимой области! Прокручиваем к нему...');
+                        canvas.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }
                     
                     // Проверяем, что canvas действительно рисует
                     if (window.game && window.game.ctx) {
@@ -170,9 +194,12 @@
                     const indicatorRect = indicator.getBoundingClientRect();
                     console.log('Индикатор видим:', indicatorRect.width > 0 && indicatorRect.height > 0 ? 'ДА' : 'НЕТ');
                     console.log('Индикатор позиция:', JSON.stringify({
-                        top: indicatorRect.top,
-                        left: indicatorRect.left
+                        top: Math.round(indicatorRect.top),
+                        left: Math.round(indicatorRect.left)
                     }));
+                    if (indicatorRect.width === 0 || indicatorRect.height === 0) {
+                        console.warn('⚠️ Индикатор не виден!');
+                    }
                 }
             }, 1500);
         });
