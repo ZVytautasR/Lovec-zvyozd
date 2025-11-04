@@ -1,65 +1,59 @@
-// Интеграция с VK API через VK Bridge (для iframe)
+// Интеграция с VK API (упрощенная версия для работы в iframe)
 let gameInitialized = false;
 let vkBridge = null;
 
-// Функция инициализации VK Bridge
+// Функция инициализации VK API
 function initVK() {
-    // Проверяем различные способы доступа к VK Bridge
-    // ВКонтакте может предоставить его через разные способы
-    if (typeof window.vkBridge !== 'undefined') {
-        vkBridge = window.vkBridge;
-    } else if (typeof window.VK !== 'undefined' && window.VK.Bridge) {
-        vkBridge = window.VK.Bridge;
-    } else if (typeof vkBridge !== 'undefined') {
-        // Используем глобальный vkBridge если доступен
-        vkBridge = window.vkBridge;
-    } else {
-        // Если VK Bridge еще не загружен, ждем немного и пробуем снова (максимум 10 раз)
-        if (initVK.attempts === undefined) initVK.attempts = 0;
-        if (initVK.attempts < 10) {
-            initVK.attempts++;
-            setTimeout(initVK, 200);
-            return;
-        }
-        vkBridge = null;
-    }
+    // Игра работает независимо от VK API
+    gameInitialized = true;
+    console.log('Игра инициализирована');
     
-    if (vkBridge) {
-        console.log('VK Bridge найден');
-        gameInitialized = true;
-        
-        try {
-            // Инициализация VK Bridge
-            vkBridge.send('VKWebAppInit', {})
-                .then(() => {
-                    console.log('VK Web App инициализирован');
-                    
-                    // Получение информации о пользователе
-                    vkBridge.send('VKWebAppGetUserInfo', {})
-                        .then(data => {
-                            if (data && data.first_name) {
-                                console.log('Пользователь:', data.first_name, data.last_name);
+    // Пытаемся использовать VK Bridge, если доступен (опционально)
+    // ВКонтакте может предоставить его автоматически в iframe
+    try {
+        // Проверяем различные способы доступа к VK API
+        if (window.vkBridge) {
+            vkBridge = window.vkBridge;
+            console.log('VK Bridge найден');
+        } else if (window.parent !== window && window.parent.postMessage) {
+            // В iframe, но VK Bridge не предоставлен напрямую
+            // Создаем простую обертку
+            vkBridge = {
+                send: function(method, params) {
+                    return new Promise((resolve, reject) => {
+                        const requestId = Date.now().toString();
+                        window.parent.postMessage({
+                            handler: 'vk-connect',
+                            type: method,
+                            params: params || {},
+                            request_id: requestId
+                        }, '*');
+                        
+                        const listener = (event) => {
+                            if (event.data && event.data.request_id === requestId) {
+                                window.removeEventListener('message', listener);
+                                if (event.data.error) {
+                                    reject(event.data.error);
+                                } else {
+                                    resolve(event.data.response || event.data);
+                                }
                             }
-                        })
-                        .catch(error => {
-                            console.log('Ошибка получения данных пользователя:', error);
-                        });
-                    
-                    // Загрузка рекорда пользователя из VK
-                    loadUserScore();
-                })
-                .catch(error => {
-                    console.log('Ошибка инициализации VK Web App:', error);
-                    gameInitialized = true;
-                });
-        } catch (error) {
-            console.log('Ошибка при работе с VK Bridge:', error);
-            gameInitialized = true;
+                        };
+                        
+                        window.addEventListener('message', listener);
+                        setTimeout(() => {
+                            window.removeEventListener('message', listener);
+                            reject(new Error('Timeout'));
+                        }, 3000);
+                    });
+                }
+            };
+            console.log('VK Bridge создан для iframe');
+        } else {
+            console.log('Игра работает в автономном режиме (без VK API)');
         }
-    } else {
-        // Если VK Bridge недоступен (не в iframe ВКонтакте), игра всё равно работает
-        console.log('VK Bridge недоступен, игра работает в автономном режиме');
-        gameInitialized = true;
+    } catch (error) {
+        console.log('Ошибка при инициализации VK API:', error);
     }
 }
 
